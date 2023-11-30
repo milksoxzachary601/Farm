@@ -1,0 +1,65 @@
+import random
+
+class Farm:
+    def __init__(self):
+        self.money = 100
+        self.crops = {'wheat': 0, 'corn': 0}
+        self.animals = {'chickens': 0, 'cows': 0}
+
+    def display_status(self):
+        print(f"Money: ${self.money}")
+        print("Crops:")
+        for crop, quantity in self.crops.items():
+            print(f"{crop.capitalize()}: {quantity}")
+        print("Animals:")
+        for animal, quantity in self.animals.items():
+            print(f"{animal.capitalize()}: {quantity}")
+
+    def plant_crop(self, crop, quantity):
+        cost = quantity * 10
+        if self.money >= cost:
+            self.money -= cost
+            self.crops[crop] += quantity
+            print(f"Planted {quantity} {crop}(s)!")
+        else:
+            print("Not enough money to plant crops.")
+
+    def harvest_crops(self):
+        for crop, quantity in self.crops.items():
+            harvested = random.randint(1, quantity)
+            self.money += harvested * 5
+            self.crops[crop] -= harvested
+            print(f"Harvested {harvested} {crop}(s)!")
+
+    def buy_animals(self, animal, quantity):
+        cost = quantity * 20
+        if self.money >= cost:
+            self.money -= cost
+            self.animals[animal] += quantity
+            print(f"Bought {quantity} {animal}(s)!")
+        else:
+            print("Not enough money to buy animals.")
+
+    def manage_animals(self):
+        for animal, quantity in self.animals.items():
+            if quantity > 0:
+                feed_cost = quantity * 5
+                self.money -= feed_cost
+                print(f"Fed {quantity} {animal}(s) at a cost of ${feed_cost}.")
+                reproduction = random.randint(0, 1)
+                if reproduction:
+                    new_animals = random.randint(1, 3)
+                    self.animals[animal] += new_animals
+                    print(f"{new_animals} baby {animal}(s) born!")
+
+# Example usage:
+farm_simulator = Farm()
+
+farm_simulator.display_status()
+farm_simulator.plant_crop('wheat', 5)
+farm_simulator.harvest_crops()
+farm_simulator.display_status()
+
+farm_simulator.buy_animals('chickens', 3)
+farm_simulator.manage_animals()
+farm_simulator.display_status()
