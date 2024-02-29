@@ -5,8 +5,11 @@ class Farm:
         self.money = 100
         self.crops = {'wheat': 0, 'corn': 0}
         self.animals = {'chickens': 0, 'cows': 0}
+        self.season = 'spring'
+        self.weather = 'sunny'
 
     def display_status(self):
+        print(f"\n=== {self.season.capitalize()} Season, {self.weather.capitalize()} Weather ===")
         print(f"Money: ${self.money}")
         print("Crops:")
         for crop, quantity in self.crops.items():
@@ -14,6 +17,11 @@ class Farm:
         print("Animals:")
         for animal, quantity in self.animals.items():
             print(f"{animal.capitalize()}: {quantity}")
+
+    def advance_season(self):
+        seasons = ['spring', 'summer', 'autumn', 'winter']
+        self.season = seasons[(seasons.index(self.season) + 1) % len(seasons)]
+        self.weather = random.choice(['sunny', 'rainy', 'cloudy'])
 
     def plant_crop(self, crop, quantity):
         cost = quantity * 10
@@ -27,9 +35,14 @@ class Farm:
     def harvest_crops(self):
         for crop, quantity in self.crops.items():
             harvested = random.randint(1, quantity)
-            self.money += harvested * 5
+            self.money += harvested * (5 if self.weather == 'sunny' else 3)
             self.crops[crop] -= harvested
-            print(f"Harvested {harvested} {crop}(s)!")
+            print(f"Harvested {harvested} {crop}(s) in {self.weather} weather!")
+
+    def sell_crops(self):
+        total_sale = sum(self.crops.values()) * 5
+        self.money += total_sale
+        print(f"Sold all crops for ${total_sale}!")
 
     def buy_animals(self, animal, quantity):
         cost = quantity * 20
@@ -55,11 +68,13 @@ class Farm:
 # Example usage:
 farm_simulator = Farm()
 
-farm_simulator.display_status()
-farm_simulator.plant_crop('wheat', 5)
-farm_simulator.harvest_crops()
-farm_simulator.display_status()
+for _ in range(3):  # Simulate 3 seasons
+    farm_simulator.display_status()
+    farm_simulator.plant_crop('wheat', 5)
+    farm_simulator.harvest_crops()
+    farm_simulator.sell_crops()
+    farm_simulator.buy_animals('chickens', 3)
+    farm_simulator.manage_animals()
+    farm_simulator.advance_season()
 
-farm_simulator.buy_animals('chickens', 3)
-farm_simulator.manage_animals()
 farm_simulator.display_status()
