@@ -3,8 +3,8 @@ import random
 class Farm:
     def __init__(self):
         self.money = 100
-        self.crops = {'wheat': 0, 'corn': 0}
-        self.animals = {'chickens': 0, 'cows': 0}
+        self.crops = {'wheat': 0, 'corn': 0, 'potato': 0}
+        self.animals = {'chickens': 0, 'cows': 0, 'sheep': 0}
         self.season = 'spring'
         self.weather = 'sunny'
 
@@ -34,10 +34,11 @@ class Farm:
 
     def harvest_crops(self):
         for crop, quantity in self.crops.items():
-            harvested = random.randint(1, quantity)
-            self.money += harvested * (5 if self.weather == 'sunny' else 3)
-            self.crops[crop] -= harvested
-            print(f"Harvested {harvested} {crop}(s) in {self.weather} weather!")
+            if quantity > 0:
+                harvested = random.randint(1, quantity)
+                self.money += harvested * (5 if self.weather == 'sunny' else 3)
+                self.crops[crop] -= harvested
+                print(f"Harvested {harvested} {crop}(s) in {self.weather} weather!")
 
     def sell_crops(self):
         total_sale = sum(self.crops.values()) * 5
@@ -65,16 +66,41 @@ class Farm:
                     self.animals[animal] += new_animals
                     print(f"{new_animals} baby {animal}(s) born!")
 
+    def random_event(self):
+        event = random.choice(['pests', 'drought', 'nothing'])
+        if event == 'pests':
+            for crop in self.crops:
+                damage = random.randint(1, 3)
+                self.crops[crop] -= damage
+                print(f"Pests destroyed {damage} {crop}(s)!")
+        elif event == 'drought':
+            print("Drought! Crops will not grow this season.")
+
+    def buy_sell_menu(self):
+        print("\n1. Buy crops\n2. Sell crops\n3. Buy animals\n4. Manage animals\n5. Advance to next season")
+        choice = input("Enter your choice: ")
+        if choice == '1':
+            crop = input("Enter crop type (wheat/corn/potato): ")
+            quantity = int(input("Enter quantity: "))
+            self.plant_crop(crop, quantity)
+        elif choice == '2':
+            self.sell_crops()
+        elif choice == '3':
+            animal = input("Enter animal type (chickens/cows/sheep): ")
+            quantity = int(input("Enter quantity: "))
+            self.buy_animals(animal, quantity)
+        elif choice == '4':
+            self.manage_animals()
+        elif choice == '5':
+            self.advance_season()
+            self.random_event()
+
 # Example usage:
 farm_simulator = Farm()
 
-for _ in range(3):  # Simulate 3 seasons
+num_seasons = 3
+for _ in range(num_seasons):
     farm_simulator.display_status()
-    farm_simulator.plant_crop('wheat', 5)
-    farm_simulator.harvest_crops()
-    farm_simulator.sell_crops()
-    farm_simulator.buy_animals('chickens', 3)
-    farm_simulator.manage_animals()
-    farm_simulator.advance_season()
+    farm_simulator.buy_sell_menu()
 
 farm_simulator.display_status()
